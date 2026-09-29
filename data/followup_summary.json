@@ -1,0 +1,91 @@
+{
+  "noise_max_adjacent_change": {
+    "sparse": {
+      "mean_density": 0.05598427152317889,
+      "activity": 0.038741666666666646,
+      "recurrence": 0.043874999999999886
+    },
+    "active": {
+      "mean_density": 0.00474213576158955,
+      "activity": 0.008077916666666685,
+      "recurrence": 0.010062500000000085
+    },
+    "dense": {
+      "mean_density": 0.07397640728476829,
+      "activity": 0.06577666666666668,
+      "recurrence": 0.057062499999999905
+    }
+  },
+  "ablation": [
+    {
+      "rule": "B12/S35678",
+      "initial_density": 0.1,
+      "final_density": 0.4109375,
+      "activity": 0.39857916666666665,
+      "growth": 0.010194503746949862
+    },
+    {
+      "rule": "B12/S35678",
+      "initial_density": 0.2,
+      "final_density": 0.41025,
+      "activity": 0.3984225,
+      "growth": 0.003306313175322138
+    },
+    {
+      "rule": "B12/S35678",
+      "initial_density": 0.3,
+      "final_density": 0.40843749999999995,
+      "activity": 0.39798958333333334,
+      "growth": 0.000529953816660537
+    },
+    {
+      "rule": "B12/S35678",
+      "initial_density": 0.4,
+      "final_density": 0.41168750000000004,
+      "activity": 0.39755875,
+      "growth": 0.000748692924363693
+    },
+    {
+      "rule": "B12/S35678",
+      "initial_density": 0.5,
+      "final_density": 0.418625,
+      "activity": 0.39806541666666667,
+      "growth": -0.004907938306030329
+    },
+    {
+      "rule": "B126/S35678",
+      "initial_density": 0.1,
+      "final_density": 0.9573125000000001,
+      "activity": 0.09969,
+      "growth": 0.5423994314220981
+    },
+    {
+      "rule": "B126/S35678",
+      "initial_density": 0.2,
+      "final_density": 0.9566250000000001,
+      "activity": 0.10458333333333333,
+      "growth": 0.5403223902056465
+    },
+    {
+      "rule": "B126/S35678",
+      "initial_density": 0.3,
+      "final_density": 0.9566874999999999,
+      "activity": 0.09792708333333335,
+      "growth": 0.5322707716103169
+    },
+    {
+      "rule": "B126/S35678",
+      "initial_density": 0.4,
+      "final_density": 0.960375,
+      "activity": 0.11000916666666667,
+      "growth": 0.5659324132973156
+    },
+    {
+      "rule": "B126/S35678",
+      "initial_density": 0.5,
+      "final_density": 0.9596875,
+      "activity": 0.10442,
+      "growth": 0.5472062674276749
+    }
+  ]
+}

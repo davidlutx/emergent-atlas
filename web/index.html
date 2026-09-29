@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An interactive workbench for exploring cellular automata and comparing rule behavior.">
+  <title>Emergent Atlas | Cellular Automata Workbench</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%232d5f8b'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='monospace' font-size='12' fill='white'%3EEA%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#top">Emergent Atlas</a>
+    <nav aria-label="Main navigation">
+      <a href="#simulator">Simulator</a>
+      <a href="#atlas">Rule map</a>
+      <a href="#results">Results</a>
+      <a href="https://github.com/davidlutx/emergent-atlas">Source</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="intro">
+      <h1>Cellular automata workbench</h1>
+      <p>Change a rule, starting state, grid size, boundary, or noise level and observe what happens. The rule map below summarizes a separate experiment across 500 rules.</p>
+    </section>
+
+    <section id="simulator" class="section">
+      <div class="section-heading">
+        <div>
+          <h2>Simulator</h2>
+          <p>Click or drag on the grid to draw and erase cells.</p>
+        </div>
+        <p class="section-note">Rules use B/S notation. For example, B3/S23 is Conway's Game of Life.</p>
+      </div>
+
+      <div class="lab-layout">
+        <div class="canvas-shell">
+          <canvas id="grid" width="800" height="800" aria-label="Interactive cellular automaton grid"></canvas>
+          <div class="canvas-stats" aria-live="polite">
+            <span>Generation <strong id="generation">0</strong></span>
+            <span>Live cells <strong id="population">0</strong></span>
+            <span>Rule <strong id="rule-readout">B3/S23</strong></span>
+          </div>
+        </div>
+
+        <aside class="control-panel" aria-label="Simulation controls">
+          <section class="control-group">
+            <h3>Run</h3>
+            <div class="button-row">
+              <button id="run" class="button primary">Run</button>
+              <button id="pause" class="button">Pause</button>
+              <button id="step" class="button">Step once</button>
+            </div>
+            <div class="button-row">
+              <button id="randomize" class="button">New random grid</button>
+              <button id="reset" class="button">Reset</button>
+              <button id="clear" class="button">Clear</button>
+            </div>
+          </section>
+
+          <section class="control-group">
+            <h3>World</h3>
+            <div class="select-grid">
+              <label>Grid size
+                <select id="grid-size">
+                  <option value="25">25 × 25</option>
+                  <option value="50" selected>50 × 50</option>
+                  <option value="75">75 × 75</option>
+                  <option value="100">100 × 100</option>
+                </select>
+              </label>
+              <label>Boundary
+                <select id="boundary">
+                  <option value="wrap" selected>Wrap around</option>
+                  <option value="dead">Dead outside</option>
+                </select>
+              </label>
+            </div>
+            <label class="range-control"><span>Speed <output id="speed-value">12 gen/s</output></span><input id="speed" type="range" min="1" max="30" value="12"></label>
+            <label class="range-control"><span>Random fill <output id="density-value">30%</output></span><input id="density" type="range" min="1" max="99" value="30"></label>
+            <p class="help">Changing random fill creates a new starting grid.</p>
+            <label class="range-control"><span>Cell-flip probability <output id="noise-value">0%</output></span><input id="noise" type="range" min="0" max="99" step="1" value="0"></label>
+            <p class="help">Applied independently to every cell after each normal update. At 50%, the flips are maximally random. Near 100%, they approach a regular inversion.</p>
+          </section>
+
+          <section class="control-group">
+            <div class="control-title"><h3>Rule</h3><strong id="rule-title">B3/S23</strong></div>
+            <div class="rule-row"><span>Birth</span><div id="birth-toggles" class="toggles"></div></div>
+            <div class="rule-row"><span>Survive</span><div id="survival-toggles" class="toggles"></div></div>
+            <div class="count-labels" aria-hidden="true"><span></span><div>0 1 2 3 4 5 6 7 8</div></div>
+            <div class="preset-row">
+              <button data-rule="B3/S23">Conway Life</button>
+              <button data-rule="B36/S23">HighLife</button>
+              <button id="outlier-preset" data-rule="B126/S35678">Study outlier</button>
+              <button data-rule="B12/S35678">Outlier without B6</button>
+            </div>
+          </section>
+
+          <section class="control-group">
+            <h3>Starting patterns</h3>
+            <div class="preset-row">
+              <button data-pattern="block">Block</button>
+              <button data-pattern="blinker">Blinker</button>
+              <button data-pattern="glider">Glider</button>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </section>
+
+    <section id="atlas" class="section">
+      <div class="section-heading">
+        <div>
+          <h2>Rule behavior map</h2>
+          <p>Click a point to inspect its measurements or load the rule into the simulator.</p>
+        </div>
+        <p class="section-note">Each point is one rule, averaged across five random starts. Nearby points behaved similarly across eight measurements.</p>
+      </div>
+      <div class="atlas-layout">
+        <div class="plot-shell">
+          <svg id="behavior-map" viewBox="0 0 760 560" role="img" aria-label="PCA scatter plot of cellular automaton rules"></svg>
+          <div id="plot-tooltip" class="tooltip" hidden></div>
+          <div id="cluster-legend" class="legend"></div>
+        </div>
+        <aside id="rule-detail" class="detail-panel">
+          <h3>No rule selected</h3>
+          <p>Choose a point on the map to see the rule's measurements.</p>
+        </aside>
+      </div>
+      <div id="cluster-cards" class="cluster-cards"></div>
+    </section>
+
+    <section id="results" class="section">
+      <div class="section-heading">
+        <div>
+          <h2>Analysis summary</h2>
+          <p>These results describe this sample and these measurements, not universal classes of cellular automata.</p>
+        </div>
+      </div>
+      <div class="finding-grid">
+        <article class="finding-card"><span>Random Forest accuracy</span><strong id="accuracy">—</strong><p>Predicting behavior group from birth and survival settings</p><small id="baseline">—</small></article>
+        <article class="finding-card"><span>Variance shown by map</span><strong id="variance">—</strong><p>Information retained by the first two PCA axes</p><small>Eight standardized behavior measurements</small></article>
+        <article class="finding-card"><span>Most unusual sampled rule</span><strong id="outlier-rule">—</strong><p>Farthest from the center of its group</p><button id="load-outlier" class="text-button">Load rule</button></article>
+      </div>
+
+      <div class="analysis-grid">
+        <article class="finding-card">
+          <div class="card-heading"><h3>Predictive rule settings</h3><span>Association, not causality</span></div>
+          <div id="importance-chart" class="bar-chart"></div>
+        </article>
+        <article class="finding-card">
+          <div class="card-heading"><h3>Initial noise study</h3><span>Movement through PCA space</span></div>
+          <svg id="noise-chart" viewBox="0 0 620 360" role="img" aria-label="PCA paths as noise increases"></svg>
+          <p class="help">The full 0% to 99% follow-up sweep and figures are available in the repository report.</p>
+        </article>
+      </div>
+
+      <details class="method-details">
+        <summary>Experiment settings and limitations</summary>
+        <p>500 sampled rules, five starts per rule, 40 × 40 toroidal grids, and 150 generations. The groups depend on the selected measurements and finite simulations. PCA loses information, K-means favors compact groups, and predictive importance does not prove causation.</p>
+      </details>
+    </section>
+  </main>
+
+  <footer>
+    <span>Emergent Atlas, David Lu, 2026</span>
+    <span><a href="https://github.com/davidlutx/emergent-atlas/blob/main/report/report.md">Main report</a> · <a href="https://github.com/davidlutx/emergent-atlas/blob/main/report/exploration_report.md">Follow-up exploration</a></span>
+  </footer>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
